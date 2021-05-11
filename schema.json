@@ -52,6 +52,10 @@
           "description": {
             "type": "string",
             "description": "A short description of the blip which appears when the blip is selected in the radar. This field can include HTML, and should include links to any supporting information or resources about the blip, and an explanation of why it's classified in the current ring."
+          },
+          "tags": {
+            "type": "string",
+            "description": "A list of tags"
           }
         },
         "required": ["name", "quadrant", "ring", "isNew", "description"],
