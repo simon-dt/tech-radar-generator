@@ -1,7 +1,12 @@
 const d3 = require('d3')
 const d3tip = require('d3-tip')
 const Chance = require('chance')
-const _ = require('lodash/core')
+const _ = {
+  map: require("lodash/map"),
+  uniq: require("lodash/uniqBy"),
+  flatten: require("lodash/flatten"),
+  each: require("lodash/each"),
+};
 const $ = require('jquery')
 require('jquery-ui/ui/widgets/autocomplete')
 
@@ -442,11 +447,6 @@ const Radar = function (size, radar) {
       .style('cursor', 'pointer')
       .on('click', redrawFullRadar)
 
-    header.select('.radar-title')
-      .append('div')
-      .attr('class', 'radar-title__logo')
-      .html('<a href="https://www.thoughtworks.com"> <img src="images/logo.png" /> </a>')
-
     buttonsGroup = header.append('div')
       .classed('buttons-group', true)
 
@@ -477,19 +477,39 @@ const Radar = function (size, radar) {
       addButton(quadrants[i])
     })
 
-    buttonsGroup.append('div')
-      .classed('print-radar-btn', true)
-      .append('div')
-      .classed('print-radar button no-capitalize', true)
-      .text('Print this radar')
-      .on('click', window.print.bind(window))
+    let tagsInData = _.uniq(_.flatten(_.map(quadrants, function (q, i) {
+      return _.flatten(_.map(q.quadrant.blips(), function (b) {
+          const tags = b.tags()
+          return tags
+        })
+    )}))).sort()
+
+    // buttonsGroup.append('div')
+    //   .classed('print-radar-btn', true)
+    //   .append('div')
+    //   .classed('print-radar button no-capitalize', true)
+    //   .text('Print this radar')
+    //   .on('click', window.print.bind(window))
 
     alternativeDiv.append('div')
       .classed('search-box', true)
       .append('input')
       .attr('id', 'auto-complete')
-      .attr('placeholder', 'Search')
+      .attr('placeholder', 'Search items')
       .classed('search-radar', true)
+
+    tagSelect = alternativeDiv
+      .append("div")
+
+    tagSelect
+      .append("label")
+      .text("Select tag")
+
+    tagSelect
+      .append("select")
+      .attr("id", "tags")
+      .attr("placeholder", "Select tag")
+
 
     $('#auto-complete').autocomplete({
       source: _.flatten(_.map(quadrants, function (q, i) {
@@ -500,6 +520,26 @@ const Radar = function (size, radar) {
       })),
       select: searchBlip.bind({})
     })
+
+    _.each(tagsInData, function (b) {
+      const name = b;
+      $('#tags')
+        .append(`<option value="${name}">${name}</option>`)
+    })
+
+    $("#tags").on('change', (e) => {
+      tag = e.currentTarget.value
+      blips = radar.allBlips()
+      _.each(blips, (blip) => {
+        $(`#blip-link-${blip.number()}`).show();
+        if (tag) {
+          if (!blip.tags().includes(tag)) {
+            console.log(blip.number())
+            $(`#blip-link-${blip.number()}`).hide();
+          }
+        }
+      })
+    });
   }
 
   function mouseoverQuadrant (order) {

@@ -19,7 +19,7 @@ const MalformedDataError = require('../exceptions/malformedDataError')
 const ExceptionMessages = require('./exceptionMessages')
 
 const { blips: rawBlips, quadrants: quadrantsOrder, rings, title } = require('../data')
-const blips = _.map(rawBlips, new InputSanitizer().sanitize)
+const blips = _.map(rawBlips, new InputSanitizer().sanitize);
 
 function plotRadar () {
   document.title = title
@@ -41,7 +41,7 @@ function plotRadar () {
     if (!quadrants[blip.quadrant]) {
       quadrants[blip.quadrant] = new Quadrant(_.capitalize(blip.quadrant))
     }
-    quadrants[blip.quadrant].add(new Blip(blip.name, ringMap[blip.ring], blip.isNew.toLowerCase() === 'true', blip.topic, blip.description))
+    quadrants[blip.quadrant].add(new Blip(blip.name, ringMap[blip.ring], blip.isNew.toLowerCase() === 'true', blip.topic, blip.description, blip.tags))
   })
 
   var radar = new Radar()

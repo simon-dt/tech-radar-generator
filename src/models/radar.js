@@ -65,6 +65,10 @@ const Radar = function () {
     }, [])
   }
 
+   self.allBlips = function () {
+     return allBlips();
+   };
+
   self.rings = function () {
     return _.sortBy(_.map(_.uniqBy(allBlips(), function (blip) {
       return blip.ring().name()

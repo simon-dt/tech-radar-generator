@@ -110,7 +110,7 @@ module.exports = {
           loader: require.resolve('val-loader'),
           options: {
             // This is only used by webpack-dev-server, and is overridden in index.js
-            data: require('./example-data.json')
+            data: require('../scripts/tech-radar-data.json')
           }
         }
       }
@@ -122,7 +122,7 @@ module.exports = {
   devtool: devtool,
 
   devServer: {
-    host: '0.0.0.0',
+    host: 'localhost',
     port: 8080
   }
 }

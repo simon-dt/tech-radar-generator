@@ -1,6 +1,8 @@
+const { isArray } = require('lodash')
 const sanitizeHtml = require('sanitize-html')
 const _ = {
-  forOwn: require('lodash/forOwn')
+  forOwn: require('lodash/forOwn'),
+  each: require('lodash/each')
 }
 
 const InputSanitizer = function () {
@@ -23,7 +25,11 @@ const InputSanitizer = function () {
   function trimWhiteSpaces (blip) {
     var processedBlip = {}
     _.forOwn(blip, function (value, key) {
-      processedBlip[key.trim()] = value.trim()
+      if (isArray(value)) {
+        processedBlip[key.trim()] = value
+      } else {
+        processedBlip[key.trim()] = value.trim()
+      }
     })
     return processedBlip
   }
@@ -36,7 +42,7 @@ const InputSanitizer = function () {
     blip.isNew = sanitizeHtml(blip.isNew, restrictedOptions)
     blip.ring = sanitizeHtml(blip.ring, restrictedOptions)
     blip.quadrant = sanitizeHtml(blip.quadrant, restrictedOptions)
-    blip.tags = sanitizeHtml(blip.tags, restrictedOptions)
+    blip.tags = blip.tags.map(tag => sanitizeHtml(tag, restrictedOptions));
 
     return blip
   }
@@ -63,7 +69,7 @@ const InputSanitizer = function () {
     blip.isNew = sanitizeHtml(isNew, restrictedOptions)
     blip.ring = sanitizeHtml(ring, restrictedOptions)
     blip.quadrant = sanitizeHtml(quadrant, restrictedOptions)
-    blip.tags = sanitizeHtml(tags, restrictedOptions)
+    blip.tags = tags.map((tag) => sanitizeHtml(tag, restrictedOptions));
 
     return blip
   }
