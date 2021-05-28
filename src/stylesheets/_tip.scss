@@ -4,25 +4,30 @@
   font-size:12px;
   display:none;
   padding:12px;
-  background:rgba(0,0,0,.8);
-  color:#fff;
-  border-radius:4px;
+  background:$grey-even-darker;
+  color:$white;
+  border-radius:2px;
   border-color:#000;
   pointer-events:none;
   z-index: 2;
+
+  h1{
+    font-size: 12px;
+    margin: 0;
+  }
 }
 
 @media screen and (min-width:800px) {
   .d3-tip{ display:block }
 }
 
-.d3-tip:after{ 
+.d3-tip:after{
   box-sizing:border-box;
   display:none;
   font-size:10px;
   width:100%;
   line-height:1;
-  color:rgba(0,0,0,.8);
+  color:$grey-even-darker;
   position:absolute;
   pointer-events:none
 }
@@ -47,8 +52,8 @@
 }
 .d3-tip.ne:after {
   content:"\25BC";
-  bottom: -8px;
-  left: 18px;
+  bottom: -7px;
+  left: 24px;
   text-align:left;
 }
 
@@ -57,8 +62,7 @@
 }
 .d3-tip.nw:after {
   content:"\25BC";
-  bottom: -8px;
-  right: 18px;
+  bottom: -7px;
+  right: 24px;
   text-align: right;
 }
-

@@ -10,19 +10,20 @@ const _ = {
 const $ = require('jquery')
 require('jquery-ui/ui/widgets/autocomplete')
 
-d3.tip = d3tip.default
+d3.tip = d3tip.default;
 
 const RingCalculator = require('../util/ringCalculator')
 const QueryParams = require('../util/queryParamProcessor')
 
 const MIN_BLIP_WIDTH = 12
-const ANIMATION_DURATION = 1000
+const ANIMATION_DURATION = 500
+const ANIMATION_FAST_DURATION = 250
 
 const Radar = function (size, radar) {
-  var svg, radarElement, quadrantButtons, buttonsGroup, header, alternativeDiv
+  var svg, radarElement, quadrantButtons, buttonsGroup, header
 
-  var tip = d3.tip().attr('class', 'd3-tip').html(function (text) {
-    return text
+  var tip = d3.tip().attr('class', 'd3-tip').html(function (blip) {
+    return `<h1>${blip.name()}</h1><span>${blip.tags().join(',')}</span>`
   })
 
   tip.direction(function () {
@@ -253,10 +254,10 @@ const Radar = function (size, radar) {
 
     group.append('text')
       .attr('x', x)
-      .attr('y', y + 4)
+      .attr('y', y + 2)
       .attr('class', 'blip-text')
       // derive font-size from current blip width
-      .style('font-size', ((blip.width * 10) / 22) + 'px')
+      // .style('font-size', ((blip.width * 10) / 22) + 'px')
       .attr('text-anchor', 'middle')
       .text(blip.number())
 
@@ -275,14 +276,14 @@ const Radar = function (size, radar) {
     }
 
     var mouseOver = function () {
-      d3.selectAll('g.blip-link').attr('opacity', 0.3)
-      group.attr('opacity', 1.0)
+      // d3.selectAll('g.blip-link').attr('opacity', 0.3)
+      // group.attr('opacity', 1.0)
       blipListItem.selectAll('.blip-list-item').classed('highlight', true)
-      tip.show(blip.name(), group.node())
+      tip.show(blip, group.node())
     }
 
     var mouseOut = function () {
-      d3.selectAll('g.blip-link').attr('opacity', 1.0)
+      // d3.selectAll('g.blip-link').attr('opacity', 1.0)
       blipListItem.selectAll('.blip-list-item').classed('highlight', false)
       tip.hide().style('left', 0).style('top', 0)
     }
@@ -438,14 +439,14 @@ const Radar = function (size, radar) {
 
   function plotRadarHeader () {
     header = d3.select('body').insert('header', '#radar')
-    header.append('div')
-      .attr('class', 'radar-title')
-      .append('div')
-      .attr('class', 'radar-title__text')
-      .append('h1')
-      .text(document.title)
-      .style('cursor', 'pointer')
-      .on('click', redrawFullRadar)
+    // header.append('div')
+    //   .attr('class', 'radar-title')
+    //   .append('div')
+    //   .attr('class', 'radar-title__text')
+    //   .append('h1')
+    //   .text(document.title)
+    //   .style('cursor', 'pointer')
+    //   .on('click', redrawFullRadar)
 
     buttonsGroup = header.append('div')
       .classed('buttons-group', true)
@@ -453,8 +454,9 @@ const Radar = function (size, radar) {
     quadrantButtons = buttonsGroup.append('div')
       .classed('quadrant-btn--group', true)
 
-    alternativeDiv = header.append('div')
-      .attr('id', 'alternative-buttons')
+    //  = buttonsGroup
+    //   .append("div")
+    //   .attr("id", "alternative-buttons");
 
     return header
   }
@@ -491,24 +493,20 @@ const Radar = function (size, radar) {
     //   .text('Print this radar')
     //   .on('click', window.print.bind(window))
 
-    alternativeDiv.append('div')
-      .classed('search-box', true)
-      .append('input')
-      .attr('id', 'auto-complete')
-      .attr('placeholder', 'Search items')
-      .classed('search-radar', true)
+    // searchBox = .append('div')
+    //   .classed('search-box', true)
 
-    tagSelect = alternativeDiv
-      .append("div")
+    quadrantButtons
+      .append("input")
+      .attr("id", "auto-complete")
+      .attr("placeholder", "Search items")
+      .classed("search-radar", true);
 
-    tagSelect
-      .append("label")
-      .text("Select tag")
-
-    tagSelect
+    quadrantButtons
       .append("select")
       .attr("id", "tags")
       .attr("placeholder", "Select tag")
+      .classed("filter-radar", true);
 
 
     $('#auto-complete').autocomplete({
@@ -521,6 +519,7 @@ const Radar = function (size, radar) {
       select: searchBlip.bind({})
     })
 
+    $("#tags").append(`<option value="_all">Filter</option>`);
     _.each(tagsInData, function (b) {
       const name = b;
       $('#tags')
@@ -531,12 +530,25 @@ const Radar = function (size, radar) {
       tag = e.currentTarget.value
       blips = radar.allBlips()
       _.each(blips, (blip) => {
-        $(`#blip-link-${blip.number()}`).show();
-        if (tag) {
-          if (!blip.tags().includes(tag)) {
-            console.log(blip.number())
-            $(`#blip-link-${blip.number()}`).hide();
-          }
+        //$(`#blip-link-${blip.number()}`).hide();
+        if (tag == "_all") {
+          $(`#blip-link-${blip.number()}`).show(
+              ANIMATION_FAST_DURATION,
+              "linear"
+          );
+          return
+        }
+
+        if (blip.tags().includes(tag)) {
+          $(`#blip-link-${blip.number()}`).show(
+            ANIMATION_FAST_DURATION,
+            "linear"
+          );
+        } else {
+          $(`#blip-link-${blip.number()}`).hide(
+            ANIMATION_FAST_DURATION,
+            "linear"
+          );
         }
       })
     });
@@ -618,52 +630,25 @@ const Radar = function (size, radar) {
     return sheetUrl
   }
 
-  function plotAlternativeRadars (alternatives, currentSheet) {
-    // if there are no alternatives altogether OR the only one is the current one,
-    // don't render the toggle.
-    if (
-      alternatives.length === 0 ||
-      (alternatives.length === 1 && currentSheet === alternatives[0])
-    ) {
-      return
-    }
 
-    var alternativeSheetButton = alternativeDiv
-      .append('div')
-      .classed('multiple-sheet-button-group', true)
-
-    alternativeSheetButton.append('p').text('Choose a sheet to populate radar')
-    alternatives.forEach(function (alternative) {
-      alternativeSheetButton
-        .append('div:a')
-        .attr('class', 'first full-view alternative multiple-sheet-button')
-        .attr('href', constructSheetUrl(alternative))
-        .text(alternative)
-
-      if (alternative === currentSheet) {
-        d3.selectAll('.alternative').filter(function () {
-          return d3.select(this).text() === alternative
-        }).attr('class', 'highlight multiple-sheet-button')
-      }
-    })
-  }
 
   self.plot = function () {
-    var rings, quadrants, alternatives, currentSheet
+    var rings, quadrants, currentSheet
 
     rings = radar.rings()
     quadrants = radar.quadrants()
-    alternatives = radar.getAlternatives()
     currentSheet = radar.getCurrentSheet()
     var header = plotRadarHeader()
 
-    plotAlternativeRadars(alternatives, currentSheet)
-
     plotQuadrantButtons(quadrants, header)
 
-    radarElement.style('height', size + 14 + 'px')
+    //radarElement.style('max-height', size + 14 + 'px')
     svg = radarElement.append('svg').call(tip)
-    svg.attr('id', 'radar-plot').attr('width', size).attr('height', size + 14)
+    svg
+      .attr("id", "radar-plot")
+      .attr("width", size)
+      .attr("height", size + 20)
+      .attr("viewBox", `0 0 ${size} ${size+20}`);
 
     _.each(quadrants, function (quadrant) {
       var quadrantGroup = plotQuadrant(rings, quadrant)

@@ -4,164 +4,23 @@
 @import 'form';
 @import 'error';
 @import 'header';
-@import url(https://www.thoughtworks.com/css/k8s_production/screen.css);
+// @import url(https://www.thoughtworks.com/css/k8s_production/screen.css);
 
 body {
-  font: 18px 'Open Sans';
+  font: $baseFont 'Open Sans';
   -webkit-font-smoothing: antialiased;
   margin: 0 0 64px;
 }
 
-@media print {
-
-  body, article {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  @page {
-    margin: 2cm;
-  }
-
-  a:after {
-    content: " <" attr(href) "> ";
-    font-size: 0.8em;
-    font-weight: normal;
-  }
-
-  #radar-plot {
-    display: none;
-  }
-
-  .quadrant-table {
-    .quadrant-table__name {
-      display: block;
-      font-size: 36pt;
-      padding: 0 10px;
-      margin-bottom: 20px;
-    }
-
-    &.first .quadrant-table__name {
-      color: $green;
-    }
-
-    &.second .quadrant-table__name {
-      color: $blue;
-    }
-
-    &.third .quadrant-table__name {
-      color: $orange;
-    }
-
-    &.fourth .quadrant-table__name {
-      color: $violet;
-    }
-  }
-
-  .quadrant-table {
-    page-break-after: always;
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    li {
-      page-break-inside: avoid;
-    }
-
-
-    h3 {
-
-      page-break-before: always;
-      padding: 0 10px;
-      text-transform: uppercase;
-      font-size: 18pt;
-      font-weight: bold;
-
-    }
-
-    h2 + h3 {
-      page-break-before: avoid;
-    }
-  }
-
-  .blip-list-item {
-    font-weight: bold;
-  }
-
-  .blip-item-description {
-    padding: 0 15px;
-  }
-
-  header {
-    text-align: left;
-
-    .radar-title .radar-title__text {
-      font-size: 40px;
-      width: 100%;
-      padding: 10px;
-      display: block;
-    }
-
-    .radar-title .radar-title__logo {
-      display: block;
-      width: auto;
-
-      a {
-        padding: 40px 10px 0;
-        display: block;
-
-        &::after {
-          display: none;
-        }
-      }
-
-      img {
-        max-width: 150px;
-      }
-    }
-
-    .buttons-group {
-      display: none;
-    }
-
-    .home-link {
-      display: none;
-
-      &.selected {
-        display: none;
-      }
-    }
-
-    #alternative-buttons {
-      display: none;
-    }
-
-    .print-radar {
-      display: none;
-    }
-  }
-
-  #footer {
-    display: none;
-  }
-
-  .error-container {
-    display: none;
-  }
-
-}
-
+ div.d3-tip {
+        transition: opacity .456s ease;
+ }
 
 @media screen {
-
   #radar {
     width: 80%;
     margin: 0 auto;
-    position: relative;
+    // position: relative;
 
     svg#radar-plot {
       margin: 0 auto;
@@ -177,23 +36,24 @@ body {
       }
 
       path {
+        stroke: none;
         &.ring-arc-3 {
-          stroke: none;
+
           fill: $grey-light;
         }
 
         &.ring-arc-2 {
-          stroke: none;
+
           fill: $grey;
         }
 
         &.ring-arc-1 {
-          stroke: none;
+
           fill: $grey-dark;
         }
 
         &.ring-arc-0 {
-          stroke: none;
+
           fill: $grey-darkest;
         }
       }
@@ -201,10 +61,12 @@ body {
       .blip-link {
         text-decoration: none;
         cursor: pointer;
+        transition: opacity .456s ease;
       }
 
       .quadrant-group {
         cursor: pointer;
+        transition: opacity .456s ease;
       }
 
       circle, polygon, path {
@@ -236,7 +98,7 @@ body {
       text {
         &.blip-text {
           font-size: 9px;
-          font-style: italic;
+          // font-style: italic;
           fill: $white;
         }
 
@@ -244,7 +106,7 @@ body {
           font-weight: bold;
           text-transform: uppercase;
           fill: $black;
-          font-size: 7px;
+          font-size: 10px;
         }
       }
     }
