@@ -15,8 +15,8 @@ let common = [r('./src/common.js')]
 let devtool
 
 let plugins = [
-  new CleanWebpackPlugin(),
-  new MiniCssExtractPlugin({ filename: '[name].[hash].css' }),
+  // new CleanWebpackPlugin(),
+  new MiniCssExtractPlugin({ filename: '[name].css' }),
   new HtmlWebpackPlugin({
     template: r('./src/index.html'),
     chunks: ['main'],
@@ -47,7 +47,7 @@ module.exports = {
 
   output: {
     // Output path is set in main.js
-    filename: '[name].[hash].js'
+    filename: '[name].js'
   },
 
   module: {
@@ -110,7 +110,7 @@ module.exports = {
           loader: require.resolve('val-loader'),
           options: {
             // This is only used by webpack-dev-server, and is overridden in index.js
-            data: require('../scripts/tech-radar-data.json')
+            data: require('../gen/json/tech-radar-data.json')
           }
         }
       }

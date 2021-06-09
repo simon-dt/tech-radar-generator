@@ -20,7 +20,12 @@ const ANIMATION_DURATION = 500
 const ANIMATION_FAST_DURATION = 250
 
 const Radar = function (size, radar) {
-  var svg, radarElement, quadrantButtons, buttonsGroup, header
+  var svg,
+    radarElement,
+    quadrantButtons,
+    buttonsGroup,
+    header,
+    containerSelector;
 
   var tip = d3.tip().attr('class', 'd3-tip').html(function (blip) {
     return `<h1>${blip.name()}</h1><span>${blip.tags().join(',')}</span>`
@@ -438,7 +443,7 @@ const Radar = function (size, radar) {
   }
 
   function plotRadarHeader () {
-    header = d3.select('body').insert('header', '#radar')
+    header = d3.select(containerSelector).insert("header", "#radar");
     // header.append('div')
     //   .attr('class', 'radar-title')
     //   .append('div')
@@ -618,8 +623,12 @@ const Radar = function (size, radar) {
     }
   }
 
-  self.init = function () {
-    radarElement = d3.select('body').append('div').attr('id', 'radar')
+  self.init = function (selector) {
+    containerSelector = containerSelector;
+    radarElement = d3
+      .select(containerSelector)
+      .append("div")
+      .attr("id", "radar");
     return self
   }
 

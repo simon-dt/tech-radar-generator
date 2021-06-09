@@ -53,7 +53,7 @@ function plotRadar () {
 
   var size = (window.innerHeight - 133) < 620 ? 620 : window.innerHeight - 133
 
-  new GraphingRadar(size, radar).init().plot()
+  new GraphingRadar(size, radar).init("#radar-container").plot();
 }
 
 const SafePlotRadar = function () {
